@@ -4,7 +4,7 @@ Note: this north sea specimen transcriptome used the discontinued genome assembl
 
 ## Transcriptome assembly
 
-I used the reads from adults.
+We used the reads from adults.
 
 ### Trinity v2.12.0 genome-guided mode
 
