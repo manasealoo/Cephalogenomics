@@ -1,5 +1,5 @@
 
-# Epigonichthys genome assembly
+# _Epigonichthys_ genome assembly
 
 ## Pre-assembly analysis
 
