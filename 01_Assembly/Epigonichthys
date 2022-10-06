@@ -1,6 +1,0 @@
-
-# Pre-assembly analysis
-
-## Jellyfish
-../jellyfish/bin/jellyfish count -C -m 21 -s 1000M -t 10 EPI_*.fastq -o EPI_both.jf
-../jellyfish/bin/jellyfish histo -t 10 EPI_both.jf > EPI_both.histo
