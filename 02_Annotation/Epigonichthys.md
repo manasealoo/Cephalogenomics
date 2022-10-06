@@ -50,4 +50,4 @@ braker.pl \
 --cores=20
 ```
 
-Where `input.sorted.bam` is the RNA-seq read alignment file and `EPI_2_scaf.fa` is the scaffolded assembly.
+Where `input.sorted.bam` is the RNA-seq read alignment file and `EPI_2_scaf.fa` is the scaffolded assembly.  I used `--useexisting` because the AUGUSTUS training parameter file `EPI` already exists from a previously failed run.
