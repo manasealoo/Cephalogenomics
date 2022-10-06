@@ -48,3 +48,21 @@ braker.pl \
 ```
 
 Where `input.sorted.bam` is the RNA-seq read alignment file and `ASY_3_scaf.fa` is the scaffolded assembly.
+
+## Protein sequence extraction
+
+### Get CDS using getAnnoFasta.pl (BRAKER v2.1.6)
+
+```
+getAnnoFasta.pl ../braker/braker.gtf --seqfile ../ASY_3_scaf.fa
+```
+
+Where `ASY_3_scaf.fa` is the scaffolded genome and `braker.gtf` is the BRAKER annotation file.
+
+### Use transeq from EMBOSS to translate CDS
+
+```
+transeq ../braker/braker.codingseq ASY.faa
+```
+
+Where `braker.codingseq` is the output of the previous step.
