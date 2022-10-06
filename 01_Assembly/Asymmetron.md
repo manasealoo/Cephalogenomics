@@ -1,4 +1,4 @@
-# Asymmetron genome assembly
+# _Asymmetron_ genome assembly
 
 ## Pre-assembly analysis
 
