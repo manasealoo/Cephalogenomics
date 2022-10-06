@@ -129,3 +129,91 @@ Where `sr_config_epi_lhe60.txt` is the config file for _Epigonichthys_ with opti
 ```
 ./assemble.sh
 ```
+
+## Post-assembly processing
+
+### Polishing using POLCA
+
+POLCA is from the MaSuRCA v3.4.2 toolkit.
+
+```
+./polca.sh \
+-a /hps/nobackup/research/marioni/sodai/EPI_masurca_LHE60_rerun/flye/assembly.fasta \
+-r '../../EPI_R1.fastq.gz ../../EPI_R2.fastq.gz' \
+-t 16 \
+-m 1G
+```
+
+Where `EPI_R1.fastq.gz` and `EPI_R2.fastq.gz` are the forward (R1) and reverse (R2) short reads. `/hps/nobackup/research/marioni/sodai/EPI_masurca_LHE60_rerun/flye/assembly.fasta` is the full path to the assembly.
+
+### Haplotig purging
+
+#### Mapping short reads using BWA MEM (BWA v0.7.17)
+
+Create an index
+
+```
+bwa index asm.fasta
+
+```
+
+Where `asm.fasta` is the polished assembly.
+
+Map short reads
+
+```
+bwa mem -t 14 asm.fasta EPI_R1.fastq.gz EPI_R2.fastq.gz > out.sam
+```
+
+Where ```EPI_R1.fastq.gz``` and ```EPI_R2.fastq.gz``` are forward (R1) and reverse (R2) reads.
+
+Convert output from .sam to .bam
+
+```
+samtools view -S -b out.sam > out.bam
+```
+#### purge_dups v1.2.5
+
+Calculate read depth histogram
+
+```
+./purge_dups/src/ngscstat out.bam
+```
+
+Where `out.bam` is the output from the alignment step.
+
+Calculate base-level read depth
+
+```
+./purge_dups/bin/calcuts TX.stat > cutoffs 2>calcults.log
+```
+
+The custom cutoffs are `5 84 84 85 85 225`
+
+Split an assembly and do a self-self alignment
+
+```
+./purge_dups/bin/split_fa asm.fasta > asm.split
+```
+
+```
+minimap2 -xasm20 -DP asm.split asm.split | gzip -c - > asm.split.self.paf.gz
+```
+
+Where `asm.split` is the split assembly.
+
+Purge haplotigs and overlaps
+
+```
+./purge_dups/bin/purge_dups -2 -T cutoffs -c TX.base.cov asm.split.self.paf.gz > dups.bed 2> purge_dups.log
+```
+
+Where `cutoffs` is a file containing the manually calculated cutoffs.
+
+Get purged primary and haplotig sequences
+
+```
+./purge_dups/bin/get_seqs dups.bed asm.fasta
+```
+
+Where `.bed` file `dups.bed` contains the coordinates for purging. Notice, `-e` was not included.
