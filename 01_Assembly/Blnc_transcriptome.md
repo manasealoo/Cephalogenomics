@@ -9,7 +9,7 @@ I used the reads from adults.
 ### Trinity v2.12.0 genome-guided mode
 
 ```
-Trinity \
+./Trinity \
 --genome_guided_bam /hps/nobackup/research/marioni/sodai/braker_results/Blnc/igv_sorted.bam \
 --genome_guided_max_intron 10000 \
 --seqType fq \
@@ -22,5 +22,5 @@ Trinity \
 
 Where `Blnc_RNA_R1_trimmed.fq.gz` and `Blnc_RNA_R2_trimmed.fq.gz` are the forward (R1) and reverse (R2) trimmed RNA-seq reads. `igv_sorted.bam` is the sorted RNA-seq mapping (which was done for IGV), i.e.
 ```
-samtools sort input.bam -o igv_sorted.bam
+./samtools sort input.bam -o igv_sorted.bam
 ```
