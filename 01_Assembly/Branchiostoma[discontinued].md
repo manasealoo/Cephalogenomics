@@ -1,4 +1,4 @@
-# Branchiostoma lanceolatum (North Sea) genome assembly[annotation discontinued]
+# _Branchiostoma lanceolatum_ (North Sea) genome assembly[annotation discontinued]
 
 Note: this north sea specimen genome was discontinued for further analysis except to used to scaffold the transcriptome assembly.
 
