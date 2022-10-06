@@ -232,3 +232,109 @@ Get purged primary and haplotig sequences
 ```
 
 Where `.bed` file `dups.bed` contains the coordinates for purging. Notice, `-e` was not included.
+
+### Repeat-masking
+
+#### Repeat-masking using RepeatModeler and RepeatMasker (from TETools 1.3)
+
+Build database
+
+```
+singularity exec docker://dfam/tetools:latest BuildDatabase \
+-name ASY \
+purged.fa
+```
+
+Where `purged.fa` is the purged assembly.
+
+Model repeats using RepeatModeler
+
+```
+singularity exec docker://dfam/tetools:latest RepeatModeler \
+-database ASY \
+-pa 6 \
+-LTRStruct
+```
+
+Mask repeats using RepeatMasker
+
+```
+singularity exec docker://dfam/tetools:latest RepeatMasker \
+-lib ASY-families.fa \
+purged.fa \
+-pa 6 \
+-xsmall
+```
+
+### RNA-scaffolding
+
+Hybrid approach using both soft- and hard-masked genomes.
+
+#### Map RNA-seq reads using hisat2
+
+Hard-mask the soft-masked assembly
+
+```
+sed '/^[^>]/s/[a-z]/N/g'<ASY_3_RM.fa >ASY_3_RM_hard.fa
+```
+
+Where `ASY_3_RM.fa` is the repeat-masked (and polished and haplotig-purged) genome (renamed from `purged.fa.masked`).
+
+Index hard-masked genome
+
+```
+hisat2-build \
+ASY_3_RM_hard.fa \
+ASY_3_RM_hard
+```
+
+Where `ASY_3_RM_hard.fa` is the hard-masked genome.
+
+Align RNA-seq reads
+
+```
+hisat2 \
+-x ASY_3_RM_hard \
+-1 ../../RNA_preprocessing/ASY_RNA_R1_trimmed.fq.gz \
+-2 ../../RNA_preprocessing/ASY_RNA_R2_trimmed.fq.gz \
+-k 3 \
+-p 10 \
+--pen-noncansplice 1000000 \
+-S input.sam
+```
+
+Where `ASY_RNA_R1_trimmed.fq.gz` and `ASY_RNA_R2_trimmed.fq.gz` are the forward (R1) and reverse (R2) trimmed RNA-seq reads, and `ASY_3_RM_hard` is the hard-masked index. These were trimmed using trimmomatic, i.e.
+
+```
+trimmomatic PE \
+-threads 10 \
+-trimlog trim_ASY.log \
+../ASY_RNA_R1_QC.fastq \
+../ASY_RNA_R2_QC.fastq \
+ASY_RNA_R1_trimmed.fq.gz \
+ASY_RNA_R1_unpaired.fq.gz \
+ASY_RNA_R2_trimmed.fq.gz \
+ASY_RNA_R2_unpaired.fq.gz \
+ILLUMINACLIP:TruSeq2-PE.fa:4:30:10 \
+SLIDINGWINDOW:5:15
+```
+
+Where `ASY_RNA_R1_QC.fastq` and `ASY_RNA_R2_QC.fastq` are the raw reads.
+
+#### P_RNA_scaffolder
+
+Run P_RNA_scaffolder on the soft-masked genome
+
+```
+./P_RNA_scaffolder/P_RNA_scaffolder_edit.sh \
+-d ../../P_RNA_scaffolder \
+-i input.sam \
+-j ASY_3_RM.fa \
+-F ../../RNA_preprocessing/ASY_RNA_R1_trimmed.fq.gz \
+-R ../../RNA_preprocessing/ASY_RNA_R2_trimmed.fq.gz \
+-t 10 \
+-o scaffold
+```
+
+Where input.sam is the mapping file from the hard-masked genome, `ASY_3_RM.fa` is the soft-masked assembly, and `ASY_RNA_R1_trimmed.fq.gz` and `ASY_RNA_R2_trimmed.fq.gz` are the forward (R1) and reverse (R2) trimmed RNA-seq reads. The `P_RNA_scaffolder_edit.sh` has been edited, i.e. `-masked=soft` was added for BLAT pairwise aligner.
+
