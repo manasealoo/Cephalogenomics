@@ -32,5 +32,5 @@ SLIDINGWINDOW:5:15
 
 Extract proteins from the longest transcriptomes.
 ```
-TransDecoder.LongOrfs -t Trinity-GG_longest_isoform.fasta```
+TransDecoder.LongOrfs -t Trinity_longest_isoform.fasta
 ```
