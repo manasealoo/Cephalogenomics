@@ -52,3 +52,10 @@ then
 ```
 ./samtools sort input.bam -o igv_sorted.bam
 ```
+
+## Protein extraction
+
+Extract proteins from the longest transcriptomes.
+```
+TransDecoder.LongOrfs -t Trinity-GG_longest_isoform.fasta
+```
