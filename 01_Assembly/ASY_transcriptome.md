@@ -27,3 +27,10 @@ ASY_Yue_ADULT_RNA_R2_unpaired.fq.gz \
 ILLUMINACLIP:adapter.fa:4:30:10 \
 SLIDINGWINDOW:5:15
 ```
+
+## Protein extraction
+
+Extract proteins from the longest transcriptomes.
+```
+TransDecoder.LongOrfs -t Trinity-GG_longest_isoform.fasta```
+```
