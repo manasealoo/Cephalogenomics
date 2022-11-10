@@ -7,4 +7,5 @@ Please the following directories contain the scripts used for this project.
   * Annotation of genomic elements.
 * 03_Phylogenetics
   * Reconstruction of the amphioxus species tree.
-* 04_ComparativeGenomics (analysis of gene-space novelty in cephalochordates).
+* 04_ComparativeGenomics
+  * Analysis of gene-space novelty in cephalochordates.
