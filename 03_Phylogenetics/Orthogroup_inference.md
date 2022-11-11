@@ -70,7 +70,7 @@ bblch.branchiostoma_belcheri.filtered.faa \
 For the transcriptome assemblies, an additional script had to be fun.
 
 ```
-sed '/^[^>]/s/*$//' < BlncHG_Trinity.branchiostoma_lanceolatum.filtered.longest_2.faa > BlncHG_Trinity.branchiostoma_lanceolatum.filtered.longest.faa
+sed -i.bak '/^[^>]/s/*$//' BlncHG_Trinity.branchiostoma_lanceolatum.filtered.longest.faa
 ```
 
 ## Running OrthoFinder
