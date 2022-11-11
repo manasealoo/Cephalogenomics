@@ -67,6 +67,20 @@ bblch.branchiostoma_belcheri.filtered.faa \
 > longest_isoforms/bblch.branchiostoma_belcheri.filtered.longest.faa
 ```
 
+For the transcriptome assemblies, an additional script had to be fun.
+
+```
+sed '/^[^>]/s/*$//' < BlncHG_Trinity.branchiostoma_lanceolatum.filtered.longest_2.faa > BlncHG_Trinity.branchiostoma_lanceolatum.filtered.longest.faa
+```
+
 ## Running OrthoFinder
 
-Using the longest isoforms, we ran OrthoFinder according to the KinFin documentation.
+Using the longest isoforms, we ran OrthoFinder.
+
+```
+orthofinder \
+-f . \
+-t 64
+```
+
+Where the current directory contains the fasta files with the longest isofroms. An automatically outputted species tree was created using STAG (which is one of the figures in the supplement). To obtain OrthoFinder's automatic concatenation analysis, `-M msa` was used. Note: these figures in the supplement do not form the main arguments for the revision of the amphioxus phylogeny. For this, please look at the ASTRAL and IQTREE analyses.
