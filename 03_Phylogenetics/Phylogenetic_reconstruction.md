@@ -83,3 +83,16 @@ java \
 ```
 
 to get the full annotation of branch support.
+
+## Gene-tree pruning
+
+We used `phylopypruner` to obtain the single copy orthologes for the quartet-based ASTRAL and concatenation-based IQ-TREE analyses.
+
+
+
+## Quartet-based species tree reconstruction using inferred orthologues.
+
+ASTRAL III was used for this analysis and is the phylogenetic reconstruction (aside from the concatenation analysis) used in the main figures.
+
+##
+
