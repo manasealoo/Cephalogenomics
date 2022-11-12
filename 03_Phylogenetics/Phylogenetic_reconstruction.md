@@ -88,9 +88,33 @@ to get the full annotation of branch support.
 
 We used `phylopypruner` to obtain the single copy orthologes for the quartet-based ASTRAL and concatenation-based IQ-TREE analyses.
 
+```
+phylopypruner \
+--dir phylopypruner_input \
+--outgroup anneissia saccoglossus \
+--threads 8 \
+--min-len 50 \
+--trim-lb 5 \
+--min-support 0.75 \
+--prune MI \
+--min-taxa 8 \
+--min-otu-occupancy 0.1 \
+--min-gene-occupancy 0.1 \
+--mask pdist \
+--output phylopypruner_output_para
+```
 
+Where
 
-## Quartet-based species tree reconstruction using inferred orthologues.
+These options were chosen to
+* Remove sequences which are shorter than 50 bases
+* Remove branches which are longer than 5 times the standard deviation of all branches
+* Collapse nodes with less than 75% bootstrap support into polytomies
+* Use the maximum inclusion (MI) algorithm for paralogy pruning; iteratively select the largest subtree which does not contain more than one sequence per taxa within that subtree
+* Remove a taxon if that taxon is present within fewer than 10% of all output alignments
+* Remove alignments where more than 90% of the positions consists of gaps
+
+## Quartet-based species tree reconstruction using inferred single-copy orthologues.
 
 ASTRAL III was used for this analysis and is the phylogenetic reconstruction (aside from the concatenation analysis) used in the main figures.
 
