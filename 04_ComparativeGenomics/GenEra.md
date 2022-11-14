@@ -13,7 +13,7 @@ diamond makedb \
  --memory-limit 100
 ```
 
-We ran GenEra on the longest isoform of each gene in B. floridae (taxid 7739), Epigonichthys (taxid 231028) and Asymmetron (taxid 223987). For example, for Epigonichthys
+We ran GenEra on the longest gene isoforms of B. floridae (taxid 7739), Epigonichthys (taxid 231028) and Asymmetron (taxid 223987). For example, for Epigonichthys
 ```
 # EPI
 genEra \
