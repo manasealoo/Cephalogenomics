@@ -3,7 +3,7 @@
 ## Transcriptome assembly
 
 ### Trinity v2.12.0 genome-free mode
-```
+```bash
 ./Trinity \
 --seqType fq \
 --left /hps/nobackup/research/marioni/sodai/Yue2014/ASY_Yue_ADULT_RNA_R1_trim.fq.gz \
@@ -14,7 +14,7 @@
 ```
 
 Where `ASY_Yue_ADULT_RNA_R1_trim.fq.gz` and `ASY_Yue_ADULT_RNA_R2_trim.fq.gz` are the forward (R1) and reverse (R2) trimmed RNA-seq reads from [Yue et al. (2014)](https://academic.oup.com/gbe/article/6/10/2681/610856). These were trimmed using trimmomatic, i.e.
-```
+```bash
 trimmomatic PE \
 -threads 30 \
 -trimlog trim_adult.log \
@@ -31,6 +31,6 @@ SLIDINGWINDOW:5:15
 ## Protein extraction
 
 Extract proteins from the longest transcriptomes.
-```
+```bash
 TransDecoder.LongOrfs -t Trinity_longest_isoform.fasta
 ```
