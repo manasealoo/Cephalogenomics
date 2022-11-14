@@ -4,7 +4,7 @@
 
 ### Illumina reads
 
-```
+```bash
 ../jellyfish/bin/jellyfish count -C -m 21 -s 1000M -t 10 ASY_*.fastq -o ASY_both.jf
 ../jellyfish/bin/jellyfish histo -t 10 ASY_both.jf > ASY_both.histo
 ```
@@ -25,7 +25,7 @@ http://genomescope.org/genomescope2.0/analysis.php?code=Ah6wDuTUPCxsKDsFqEsF
 
 ### Nanopore reads
 
-```
+```bash
 ./NanoPlot \
 -t 8 \
 -o ONT_stats \
@@ -36,7 +36,7 @@ http://genomescope.org/genomescope2.0/analysis.php?code=Ah6wDuTUPCxsKDsFqEsF
 --fastq ASY_all2_guppy4.fastq.gz
 ```
 
-```
+```bash
 ./NanoPlot \
 -t 8 \
 -o ONT_stats \
@@ -53,7 +53,7 @@ MaSuRCA + Flye v2.8.2
 
 ### MaSuRCA config file
 
-```
+```bash
 DATA
 #Illumina paired end reads supplied as <two-character prefix> <fragment mean> <fragment stdev> <forward_reads> <reverse_reads>
 #if single-end, do not specify <reverse_reads>
@@ -120,13 +120,13 @@ Where `/hps/nobackup/research/marioni/sodai/ASY_all2_guppy4.fastq.gz` is the ful
 
 ### MaSuRCA assembly (v3.4.2)
 
-```
+```bash
 ./masurca sr_config_asy_lhe60.txt
 ```
 
 Where `sr_config_asy_lhe60.txt` is the config file for _Asymmetron_ with option `LHE_COVERAGE=60`. This generates a configuration shell script `assembly.sh`, which is run to assemble the data.
 
-```
+```bash
 ./assemble.sh
 ```
 
@@ -134,7 +134,7 @@ Where `sr_config_asy_lhe60.txt` is the config file for _Asymmetron_ with option 
 
 I then run Flye v2.8.2 on the MaSuRCA 'mega-reads'.
 
-```
+```bash
 ./flye \
 -t 32 \
 ASY_masurca_LHE60_rerun/mr.41.15.10.0.02.1.fa \
@@ -151,7 +151,7 @@ Where ```ASY_masurca_Flye_m_para_rerun``` is the output directory and ```ASY_mas
 
 POLCA is from the MaSuRCA v3.4.2 toolkit.
 
-```
+```bash
 ./polca.sh \
 -a /hps/nobackup/research/marioni/sodai/ASY_masurca_Flye_m_para_LHE60_rerun/assembly.fasta \
 -r '../../ASY_R1.fastq.gz ../../ASY_R2.fastq.gz' \
@@ -167,16 +167,15 @@ Where `ASY_R1.fastq.gz` and `ASY_R2.fastq.gz` are the forward (R1) and reverse (
 
 Create an index
 
-```
+```bash
 bwa index asm.fasta
-
 ```
 
 Where `asm.fasta` is the polished assembly.
 
 Map short reads
 
-```
+```bash
 bwa mem -t 14 asm.fasta ASY_R1.fastq.gz ASY_R2.fastq.gz > out.sam
 ```
 
@@ -184,14 +183,14 @@ Where ```ASY_R1.fastq.gz``` and ```ASY_R2.fastq.gz``` are forward (R1) and rever
 
 Convert output from .sam to .bam
 
-```
+```bash
 samtools view -S -b out.sam > out.bam
 ```
 #### purge_dups v1.2.5
 
 Calculate read depth histogram
 
-```
+```bash
 ./purge_dups/src/ngscstat out.bam
 ```
 
@@ -199,7 +198,7 @@ Where `out.bam` is the output from the alignment step.
 
 Calculate base-level read depth
 
-```
+```bash
 ./purge_dups/bin/calcuts TX.stat > cutoffs 2>calcults.log
 ```
 
@@ -207,11 +206,11 @@ The custom cutoffs are `5 38 62 75 125 225`
 
 Split an assembly and do a self-self alignment
 
-```
+```bash
 ./purge_dups/bin/split_fa asm.fasta > asm.split
 ```
 
-```
+```bash
 minimap2 -xasm20 -DP asm.split asm.split | gzip -c - > asm.split.self.paf.gz
 ```
 
@@ -219,7 +218,7 @@ Where `asm.split` is the split assembly.
 
 Purge haplotigs and overlaps
 
-```
+```bash
 ./purge_dups/bin/purge_dups -2 -T cutoffs -c TX.base.cov asm.split.self.paf.gz > dups.bed 2> purge_dups.log
 ```
 
@@ -227,7 +226,7 @@ Where `cutoffs` is a file containing the manually calculated cutoffs.
 
 Get purged primary and haplotig sequences
 
-```
+```bash
 ./purge_dups/bin/get_seqs dups.bed asm.fasta
 ```
 
@@ -239,7 +238,7 @@ Where `.bed` file `dups.bed` contains the coordinates for purging. Notice, `-e` 
 
 Build database
 
-```
+```bash
 singularity exec docker://dfam/tetools:latest BuildDatabase \
 -name ASY \
 purged.fa
@@ -249,7 +248,7 @@ Where `purged.fa` is the purged assembly.
 
 Model repeats using RepeatModeler
 
-```
+```bash
 singularity exec docker://dfam/tetools:latest RepeatModeler \
 -database ASY \
 -pa 6 \
@@ -258,7 +257,7 @@ singularity exec docker://dfam/tetools:latest RepeatModeler \
 
 Mask repeats using RepeatMasker
 
-```
+```bash
 singularity exec docker://dfam/tetools:latest RepeatMasker \
 -lib ASY-families.fa \
 purged.fa \
@@ -274,7 +273,7 @@ Hybrid approach using both soft- and hard-masked genomes.
 
 Hard-mask the soft-masked assembly
 
-```
+```bash
 sed '/^[^>]/s/[a-z]/N/g'<ASY_3_RM.fa >ASY_3_RM_hard.fa
 ```
 
@@ -282,7 +281,7 @@ Where `ASY_3_RM.fa` is the repeat-masked (and polished and haplotig-purged) geno
 
 Index hard-masked genome
 
-```
+```bash
 hisat2-build \
 ASY_3_RM_hard.fa \
 ASY_3_RM_hard
@@ -292,7 +291,7 @@ Where `ASY_3_RM_hard.fa` is the hard-masked genome.
 
 Align RNA-seq reads
 
-```
+```bash
 hisat2 \
 -x ASY_3_RM_hard \
 -1 ../../RNA_preprocessing/ASY_RNA_R1_trimmed.fq.gz \
@@ -305,7 +304,7 @@ hisat2 \
 
 Where `ASY_RNA_R1_trimmed.fq.gz` and `ASY_RNA_R2_trimmed.fq.gz` are the forward (R1) and reverse (R2) trimmed RNA-seq reads, and `ASY_3_RM_hard` is the hard-masked index. These were trimmed using trimmomatic, i.e.
 
-```
+```bash
 trimmomatic PE \
 -threads 10 \
 -trimlog trim_ASY.log \
@@ -325,7 +324,7 @@ Where `ASY_RNA_R1_QC.fastq` and `ASY_RNA_R2_QC.fastq` are the raw reads.
 
 Run P_RNA_scaffolder on the soft-masked genome
 
-```
+```bash
 ./P_RNA_scaffolder/P_RNA_scaffolder_edit.sh \
 -d ../../P_RNA_scaffolder \
 -i input.sam \
