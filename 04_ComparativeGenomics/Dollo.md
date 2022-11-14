@@ -2,14 +2,14 @@
 
 KinFin scripts were used on the outputs of orthofinder.
 
-```
+```bash
 echo '#IDX,TAXON' > config.txt
 sed 's/: /,/g' SpeciesIDs.txt | \
     cut -f 1 -d"." \
     >> config.txt
 ```
 
-```
+```bash
 xvfb-run ../../kinfin/kinfin \
 --cluster_file Orthogroups.txt \
 --config_file config.txt \
