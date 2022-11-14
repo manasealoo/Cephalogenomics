@@ -8,7 +8,7 @@ We used the reads from adults.
 
 ### Trinity v2.12.0 genome-guided mode
 
-```
+```bash
 ./Trinity \
 --genome_guided_bam /hps/nobackup/research/marioni/sodai/braker_results/Blnc/igv_sorted.bam \
 --genome_guided_max_intron 10000 \
@@ -22,7 +22,7 @@ We used the reads from adults.
 
 Where `Blnc_RNA_R1_trimmed.fq.gz` and `Blnc_RNA_R2_trimmed.fq.gz` are the forward (R1) and reverse (R2) trimmed RNA-seq reads. These were trimmed using trimmomatic, i.e.
 
-```
+```bash
 trimmomatic PE \
 -threads 10 \
 -trimlog fastqc2.log \
@@ -37,7 +37,7 @@ SLIDINGWINDOW:5:15
 ```
 
 `igv_sorted.bam` is the sorted RNA-seq mapping (with the prefix `igv` because the sorting was initially done for IGV), i.e.
-```
+```bash
 ./hisat2 \
 -x Blnc_2_scaf \
 -1 ../../RNA_preprocessing/Blnc_RNA_R1_trimmed.fq.gz \
@@ -45,17 +45,17 @@ SLIDINGWINDOW:5:15
 -p 10 \
 -S input.sam
 ```
-```
+```bash
 ./samtools view -bS input.sam > input.bam
 ```
 then
-```
+```bash
 ./samtools sort input.bam -o igv_sorted.bam
 ```
 
 ## Protein extraction
 
 Extract proteins from the longest transcriptomes.
-```
+```bash
 TransDecoder.LongOrfs -t Trinity-GG_longest_isoform.fasta
 ```
