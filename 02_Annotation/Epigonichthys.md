@@ -6,7 +6,7 @@
 
 Index the draft genome
 
-```
+```bash
 hisat2-build \
 EPI_2_scaf.fa \
 EPI_2_scaf
@@ -15,7 +15,7 @@ Where `EPI_2_scaf.fa` is the scaffolded assembly (repeat-masked, haplotig-purged
 
 Map the RNA-seq reads
 
-```
+```bash
 hisat2 \
 -x EPI_2_scaf \
 -1 ../../RNA_preprocessing/EPI_RNA_R1_trimmed.fq.gz \
@@ -28,18 +28,18 @@ Where `EPI_RNA_R1_trimmed.fq.gz` and `EPI_RNA_R2_trimmed.fq.gz` are the forward 
 
 Convert `.sam` to `.bam`
 
-```
+```bash
 samtools view -bS input.sam > input.bam
 ```
 Sort
 
-```
+```bash
 samtools sort -n -@ 4 -m 2G input.bam -o input.sorted.bam
 ```
 
 ### BRAKER ET mode (BRAKER v2.1.6)
 
-```
+```bash
 braker.pl \
 --species=EPI \
 --genome=EPI_2_scaf.fa \
@@ -55,7 +55,7 @@ Where `input.sorted.bam` is the RNA-seq read alignment file and `EPI_2_scaf.fa` 
 
 ### Get CDS using getAnnoFasta.pl (BRAKER v2.1.6)
 
-```
+```bash
 getAnnoFasta.pl ../braker/braker.gtf --seqfile ../EPI_2_scaf.fa
 ```
 
@@ -63,7 +63,7 @@ Where `EPI_2_scaf.fa` is the scaffolded genome and `braker.gtf` is the BRAKER an
 
 ### Use transeq from EMBOSS to translate CDS
 
-```
+```bash
 transeq ../braker/braker.codingseq EPI.faa
 ```
 
