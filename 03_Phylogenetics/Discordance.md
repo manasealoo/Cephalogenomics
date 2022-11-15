@@ -26,7 +26,7 @@ where
 The logic of `*1,*2,*3` stems from `RL|SO` `RS|LO` `RO|LS` configurations of quartet topologies. `R` and `L` are from the order in the newick file. For example, at the origin of cephalochordates, the annotations show `q1=0.4413628148096929;q2=0.3171582711012769;q3=0.2414789140890303;f1=2279.638938492064;f2=1638.1224702380953;f3=1247.2385912698414;pp1=1.0;pp2=5.5195361057352476E-58;pp3=0.0;QC=72;EN=5165.0`, which means
 
 * 44.14% (2279.64) of quartets support ((ASY,EPI),BRA) with local PP 1.0
-* 31.72% (1638.12) of quartets support ((BRA,EPI),ASY) with local PP 5.5*10^-58
+* 31.72% (1638.12) of quartets support ((BRA,EPI),ASY) with local PP 5.5*10^-58 (which is basically 0; the probably is lower than the inverse of the number of sands on earth or the number of stars in the universe).
 * 24.15% (1247.24) of quartets support ((ASY,BRA),EPI) with local PP 0
 * 5165 is the effective number of gene trees.
 
