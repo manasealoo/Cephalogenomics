@@ -121,6 +121,8 @@ Then we ran DiscoVista
 singularity exec docker://esayyari/discovista discoVista.py -m 1 -c data/parameter/clades-def_4.txt -p PPP_BS_para_discovista -t 80 -o results_BS_trees_new
 ```
 
+`-t 80` defines the threshold for 'strong' support at 80% bootstrap support for a given topology.
+
 where the clades to be tested are defined as follows.
 ```bash
 Clade Name	Clade Definition	Section Letter	Components	Show	Comments
@@ -144,4 +146,153 @@ CEPH/TUNI	"bblch""+""BlncHG_Trinity""+""Blnc2018_re""+""bflor""+""ASY_Yue""+""AS
 
 ## Likelihood-based phylogenetic signal in the supermatrix
 
+This analysis is based on [work by Shen, Steenwyk and Rokas (2021)](https://academic.oup.com/sysbio/article/70/5/997/6146422). The perl script for it is [publicly available](https://datadryad.org/stash/dataset/doi:10.5061/dryad.9p8cz8wc5). The partition file (`partition_PPP_BS_MARE_t100_d30.super_cl.txt`) and the alignment (`supermatrix_PPP_BS_MARE_t100_d30.fasta`) for the concatenation analysis was used.
+
+```bash
+sed 's/;//' partition_data_MARE_2.cl.txt_reduced | sed 's/charset/charset,/' | sed 's/ - /-/' | sed 's/charset/AUTO/' > partition_PPP_BS_MARE_t100_d30.super_cl.txt
+```
+
+```bash
+iqtree \
+-s CAT_ML_BS_p_sig_new_3/supermatrix_PPP_BS_MARE_t100_d30.fasta \
+-p CAT_ML_BS_p_sig_new_3/partition_PPP_BS_MARE_t100_d30.super_cl.txt \
+-m MFP-MERGE \
+-T 32 \
+-z data_new_3.trees \
+-wsl \
+--seqtype AA \
+-keep-ident
+```
+
+where `data_new_3.trees` consists of
+```bash
+((saccoglossus,anneissia),(((eptatretus,((amblyraja,callorhinchus),(latimeria,lepisosteus))),(ciona,botrylloides)),((bblch,(bflor,(BlncHG_Trinity,Blnc2018_re))),(EPI,(ASY,ASY_Yue)))));
+((saccoglossus,anneissia),(((eptatretus,((amblyraja,callorhinchus),(latimeria,lepisosteus))),(ciona,botrylloides)),((ASY,ASY_Yue),(EPI,(bblch,(bflor,(BlncHG_Trinity,Blnc2018_re)))))));
+((saccoglossus,anneissia),(((eptatretus,((amblyraja,callorhinchus),(latimeria,lepisosteus))),(ciona,botrylloides)),(EPI,((ASY,ASY_Yue),(bblch,(bflor,(BlncHG_Trinity,Blnc2018_re)))))));
+```
+
+which represents the following topologies `tr1 (BRA,(EPI,ASY)); tr2 (ASY,(EPI,BRA)); tr3 (EPI,(ASY,BRA));`. In other words, _Branchiostoma_-sister, _Asymmetron_-sister and _Epigonichthys_-sister.
+
+This gives the resulting file `partition_PPP_BS_MARE_t100_d30.super_cl.txt.sitelh`. This was then processed
+
+```bash
+awk -F: 'NR==2 {print $1; exit}' partition_PPP_BS_MARE_t100_d30.super_cl.txt.sitelh > tr1tr2.sitelh
+awk -F: 'NR==3 {print $1; exit}' partition_PPP_BS_MARE_t100_d30.super_cl.txt.sitelh >> tr1tr2.sitelh
+
+awk -F: 'NR==2 {print $1; exit}' partition_PPP_BS_MARE_t100_d30.super_cl.txt.sitelh > tr1tr3.sitelh
+awk -F: 'NR==4 {print $1; exit}' partition_PPP_BS_MARE_t100_d30.super_cl.txt.sitelh >> tr1tr3.sitelh
+
+awk -F: 'NR==3 {print $1; exit}' partition_PPP_BS_MARE_t100_d30.super_cl.txt.sitelh >> tr2tr3.sitelh
+awk -F: 'NR==4 {print $1; exit}' partition_PPP_BS_MARE_t100_d30.super_cl.txt.sitelh >> tr2tr3.sitelh
+```
+
+The files were then changed a bit, e.g. Tree3 to Tree2 (from 3 563157 to 2 563157), to accommodate the script.
+
+The perl script `GLS_parser_v1.pl` was the used.
+```bash
+perl GLS_parser_v1.pl CAT_ML_BS_p_sig_new_3/tr1tr2.sitelh CAT_ML_BS_p_sig_new_3/partition_PPP_BS_MARE_t100_d30.super_cl.txt GLS_parse_analysis_tr1tr2
+perl GLS_parser_v1.pl CAT_ML_BS_p_sig_new_3/tr1tr3.sitelh CAT_ML_BS_p_sig_new_3/partition_PPP_BS_MARE_t100_d30.super_cl.txt GLS_parse_analysis_tr1tr3
+perl GLS_parser_v1.pl CAT_ML_BS_p_sig_new_3/tr2tr3.sitelh CAT_ML_BS_p_sig_new_3/partition_PPP_BS_MARE_t100_d30.super_cl.txt GLS_parse_analysis_tr2tr3
+```
+
+The data was then processed in R.
+
 ## Polytomy test
+
+The polytomy test was run on the pruned gene trees used for the ASTRAL analysis. This analysis was enabled through [phykit](https://jlsteenwyk.com/PhyKIT/index.html). We first processed the trees via the script `run_clean_geneID.sh`.
+
+```bash
+./run_clean_geneID.sh
+```
+
+where the script consists of
+
+```bash
+#!/usr/bin/env bash
+files=(*.treefile)
+sed 's/|XP_[0-9]*\.[0-9]\:/\:/g' ${files[$LSB_JOBINDEX-1]} | \
+sed 's/|TRINITY_GG_[0-9]*_c[0-9]*_g[0-9]*_i[0-9]*\.p[0-9]*\:/\:/g' | \
+sed 's/|TRINITY_DN[0-9]*_c[0-9]*_g[0-9]*_i[0-9]*\.p[0-9]*\:/\:/g' | \
+sed 's/|g[0-9]*\.t[0-9]*\:/\:/g' | \
+sed 's/|Boleac\.CG\.SB_v[0-9]*\.S[0-9]*\.g[0-9]*\.[0-9]*\.t\:/\:/g' | \
+sed 's/|Eptbu[0-9]*\.t[0-9]*\:/\:/g' | \
+sed 's/|NP_[0-9]*\.[0-9]\:/\:/g' > ${files[$LSB_JOBINDEX-1]%.treefile}.cl.tre
+```
+and then
+
+```bash
+x=$(ls -d $PWD/PPP_BS_input_trees/*.cl.tre) ; printf "%s\n" "$x" > PPP_BS_input_trees_location.txt
+```
+
+from which `phykit`'s `ptt` was run to test for polytomy at the origin of cephalochordates. Before we ran this, we had to define the groups (`#label	group0	group1	group2	outgroup`)
+
+Running the polytomy test
+
+```bash
+phykit ptt -t PPP_BS_input_trees_location.txt -g groups_file_CEPH.txt > phykit_ptt_CEPH_BS.txt
+```
+
+where `groups_file_CEPH.txt` consists of
+
+```
+CEPH	bblch;BlncHG_Trinity;Blnc2018_re;bflor	ASY_Yue;ASY	EPI	amblyraja;callorhinchus;lepisosteus;latimeria;eptatretus;ciona;botrylloides
+```
+
+resulting in
+
+```
+Gene Support Frequency Results
+==============================
+chi-squared: 308.3312
+p-value: 0.0
+total genes: 5102
+0-1: 1185
+0-2: 1708
+1-2: 2209
+```
+
+This was also done for chordates
+```bash
+phykit ptt -t PPP_BS_input_trees_location.txt -g groups_file_CHOR.txt > phykit_ptt_CHOR_BS.txt
+```
+
+where `groups_file_CHOR.txt` consists of
+```
+CHOR	amblyraja;callorhinchus;lepisosteus;latimeria;eptatretus	bblch;BlncHG_Trinity;Blnc2018_re;bflor;ASY_Yue;ASY;EPI	ciona;botrylloides	anneissia;saccoglossus
+```
+
+resulting in
+
+```
+Gene Support Frequency Results
+==============================
+chi-squared: 1365.1537
+p-value: 0.0
+total genes: 3370
+0-1: 592
+0-2: 2134
+1-2: 644
+```
+
+and _Branchiostoma_ genus.
+
+```bash
+phykit ptt -t PPP_BS_input_trees_location.txt -g groups_file_BRAN.txt > phykit_ptt_BRAN_BS.txt
+```
+
+resulting in
+
+```
+Gene Support Frequency Results
+==============================
+chi-squared: 1788.3684
+p-value: 0.0
+total genes: 5152
+0-1: 3147
+0-2: 951
+1-2: 1054
+```
+and where `groups_file_BRAN.txt` consists of
+```
+BRAN	BlncHG_Trinity;Blnc2018_re	bflor	bblch	ASY_Yue;ASY;EPI
+```
