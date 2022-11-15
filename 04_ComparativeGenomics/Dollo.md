@@ -23,37 +23,6 @@ xvfb-run ../../kinfin/kinfin \
 
 Where `Orthogroups.txt`, `SequenceIDs.txt`, `SpeciesIDs.txt` and `SpeciesTree_rooted.txt` were obtained from the orthofinder run.
 
-## Checking the RNA-seq support for the gene models
-
-To test whether the new genes we see are directly supported by RNA-seq evidence we used a script in the BRAKER pipeline `selectsupportedsubsets.py` and used the `braker.gtf` and `hintsfile.gff`.
-
-```bash
-./selectSupportedSubsets.py --fullSupport fullSupport2.tsv --anySupport anySupport2.tsv --noSupport noSupport2.tsv braker.gtf hintsfile.gff
-```
-
-After processing the results, i.e. in _B. lanceolatum_ 2018 reannotation
-```bash
-for i in *Support2.tsv; do
-grep "gene_id" $i | awk -F "\t" ' { print $9 } ' | awk -F ";" ' { print $1 } ' | uniq | sed 's/.*_//' | sed 's/"//' > ${i%.tsv}_geneID.tsv
-done
-
-for i in *.tsv; do
-sort -u $i > ${i%.tsv}.sort.tsv
-done
-```
-```bash
-# Extract Blnc2018_re lines from Cephalochordate-restricted HOGs
-grep "Blnc2018_re" ~/ceph_OG.txt | awk ' { print $1 "\t" $3 } ' > ~/braker_support/ceph_OG_BLNC2018_cl.tsv
-
-cd ~/braker_support
-
-grep "Blnc2018_re\." Orthogroups.tsv | awk -F "\t" ' { print $1 "\t" $4 } ' > OG_BLNC2018.tsv
-```
-```bash
-grep -wFf BLNC2018/anySupport2_geneID.sort.tsv OG_BLNC2018.tsv | awk ' { print $1 } ' | sed 's/$/\t1/' > OG_BLNC2018_any.tsv
-```
-The results were plotted in R.
-
 ## Checking for hits elsewhere in the tree of life
 
 Checking whether the cephalochordate-exclusive orthogroups have hits elsewhere in the tree of life.
@@ -116,3 +85,34 @@ sed 's/_.*//' | sort -u | wc -l
 The output numbers were compared to the number of complete and partial orthogroups that contained _B. floridae_.
 
 Other thresholds were tested, i.e. by changing `awk '$3 >= {$pident_threshold}'` and `awk '$4 >= {$qcovhsp_threshold}'` as well as `awk '$5 >= {$evalue_threshold}'`. These results are in the supplementary.
+
+## Checking the RNA-seq support for the gene models
+
+To test whether the new genes we see are directly supported by RNA-seq evidence we used a script in the BRAKER pipeline `selectsupportedsubsets.py` and used the `braker.gtf` and `hintsfile.gff`.
+
+```bash
+./selectSupportedSubsets.py --fullSupport fullSupport2.tsv --anySupport anySupport2.tsv --noSupport noSupport2.tsv braker.gtf hintsfile.gff
+```
+
+After processing the results, i.e. in _B. lanceolatum_ 2018 reannotation
+```bash
+for i in *Support2.tsv; do
+grep "gene_id" $i | awk -F "\t" ' { print $9 } ' | awk -F ";" ' { print $1 } ' | uniq | sed 's/.*_//' | sed 's/"//' > ${i%.tsv}_geneID.tsv
+done
+
+for i in *.tsv; do
+sort -u $i > ${i%.tsv}.sort.tsv
+done
+```
+```bash
+# Extract Blnc2018_re lines from Cephalochordate-restricted HOGs
+grep "Blnc2018_re" ~/ceph_OG.txt | awk ' { print $1 "\t" $3 } ' > ~/braker_support/ceph_OG_BLNC2018_cl.tsv
+
+cd ~/braker_support
+
+grep "Blnc2018_re\." Orthogroups.tsv | awk -F "\t" ' { print $1 "\t" $4 } ' > OG_BLNC2018.tsv
+```
+```bash
+grep -wFf BLNC2018/anySupport2_geneID.sort.tsv OG_BLNC2018.tsv | awk ' { print $1 } ' | sed 's/$/\t1/' > OG_BLNC2018_any.tsv
+```
+The results were plotted in R.
