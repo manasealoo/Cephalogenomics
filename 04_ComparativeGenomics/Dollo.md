@@ -81,3 +81,5 @@ sed 's/_.*//' | sort -u | wc -l
 ```
 
 The output numbers were compared to the number of complete and partial orthogroups that contained _B. floridae_.
+
+Other thresholds were tested, i.e. by changing `awk '$3 >= {$pident_threshold}'` and `awk '$4 >= {$qcovhsp_threshold}'` as well as `awk '$5 >= {$evalue_threshold}'`. These results are in the supplementary.
