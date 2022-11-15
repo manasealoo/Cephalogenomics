@@ -71,11 +71,19 @@ and
 > is.binary(yc)
 [1] TRUE
 ```
-resulting in the following tree after removing the support values (for CAFE5 analysis).
+resulting in the following tree after removing the support values (for CAFE5 analysis). 
 
 ```R
 ((((bblch:26.80891516,(bflor:20.86078282,(Blnc2018_re:5.90689614,BlncHG_Trinity:5.90689614):14.95388667):5.948132345):21.63061117,(EPI:38.29041288,(ASY_Yue:14.21204082,ASY:14.21204082):24.07837206):10.14911345):473.6441633,((((latimeria:106.2193981,lepisosteus:106.2193981):31.10054534,(callorhinchus:75.14480955,amblyraja:75.14480955):62.17513387):164.9499229,eptatretus:302.2698663):167.4216333,(ciona:252.6353794,botrylloides:252.6353794):217.0561202):52.39219006):39.77890186,(saccoglossus:494.483958,anneissia:494.483958):67.37863353);
 ```
+
+For others in the supplementary,
+
+```R
+ape::drop.tip
+```
+
+was used to remove trinity species with potential gene family size expansion.
 
 ## Running CAFE5
 
