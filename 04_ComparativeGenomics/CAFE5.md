@@ -87,6 +87,16 @@ was used to test the consistency of the results with removal of less reliable as
 
 ## Running CAFE5
 
+To estimate lambda with no among family rate variation, we ran
+
+```bash
+/hps/software/users/marioni/sodai/CAFE5/bin/cafe5 \
+-i run_7_OG.cafe_fam_filt.tsv \
+-t deut_ultra_tree.txt \
+-o res_2
+```
+The top 100 gene families with the largest difference between the max and min counts were removed as suggested in the [CAFE5 documentation](https://github.com/hahnlab/CAFE5#known-limitations).
+
 To incorporate among family rate variation with both lambda and alpha estimated and three discrete gamma rate categories, we ran
 
 ```bash
@@ -98,13 +108,3 @@ To incorporate among family rate variation with both lambda and alpha estimated 
 ````
 
 No gene families were filtered in this analysis.
-
-To estimate lambda with no among family rate variation, we ran
-
-```bash
-/hps/software/users/marioni/sodai/CAFE5/bin/cafe5 \
--i run_7_OG.cafe_fam_filt.tsv \
--t deut_ultra_tree.txt \
--o res_2
-```
-The top 100 gene families with the largest difference between the max and min counts were removed as suggested in the [CAFE5 documentation](https://github.com/hahnlab/CAFE5#known-limitations).
