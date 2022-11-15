@@ -23,7 +23,7 @@ xvfb-run ../../kinfin/kinfin \
 
 Where `Orthogroups.txt`, `SequenceIDs.txt`, `SpeciesIDs.txt` and `SpeciesTree_rooted.txt` were obtained from the orthofinder run.
 
-## Checking whether the cephalochordate-exclusive orthogroups have hits anywhere in the NR
+## Checking whether the cephalochordate-exclusive orthogroups have hits elsewhere in the tree of life
 
 ```bash
 wget https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz
