@@ -83,7 +83,7 @@ For others in the supplementary,
 ape::drop.tip
 ```
 
-was used to remove trinity species with potential gene family size expansion.
+was used to test the consistency of the results with removal of less reliable assemblies/annotations (e.g. transcriptome assemblies).
 
 ## Running CAFE5
 
