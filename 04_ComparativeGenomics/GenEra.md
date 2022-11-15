@@ -50,7 +50,7 @@ interproscan
 -i 7739_phylostrata_assignation_CEPH.faa \
 -goterms
 ```
-We then extracted all the GO terms that are associated with each genes, creating a tab-delimited table. Josué Barerra-Redondo kindly provided me with a script to do this, `get_GO.pl`.
+We then extracted all the GO terms that are associated with each genes, creating a tab-delimited table. Josué Barerra-Redondo kindly provided me with a script to do this, `get_GO.pl`. The script was previous used in this [paper](https://www.sciencedirect.com/science/article/pii/S1674205219300036).
 
 ```perl
 #!/usr/bin/perl
