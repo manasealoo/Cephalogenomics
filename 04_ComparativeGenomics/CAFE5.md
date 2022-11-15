@@ -80,7 +80,7 @@ resulting in the following tree after removing the support values (for CAFE5 ana
 For others in the supplementary,
 
 ```R
-ape::drop.tip
+ape::drop.tip()
 ```
 
 was used to test the consistency of the results with removal of less reliable assemblies/annotations (e.g. transcriptome assemblies).
