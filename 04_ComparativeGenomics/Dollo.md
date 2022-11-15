@@ -40,14 +40,16 @@ done
 for i in *.tsv; do
 sort -u $i > ${i%.tsv}.sort.tsv
 done
-
+```
+```bash
 # Extract Blnc2018_re lines from Cephalochordate-restricted HOGs
 grep "Blnc2018_re" ~/ceph_OG.txt | awk ' { print $1 "\t" $3 } ' > ~/braker_support/ceph_OG_BLNC2018_cl.tsv
 
 cd ~/braker_support
 
 grep "Blnc2018_re\." Orthogroups.tsv | awk -F "\t" ' { print $1 "\t" $4 } ' > OG_BLNC2018.tsv
-
+```
+```bash
 grep -wFf BLNC2018/anySupport2_geneID.sort.tsv OG_BLNC2018.tsv | awk ' { print $1 } ' | sed 's/$/\t1/' > OG_BLNC2018_any.tsv
 ```
 The results were plotted in R.
