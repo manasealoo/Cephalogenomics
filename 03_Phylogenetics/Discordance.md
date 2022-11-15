@@ -122,7 +122,7 @@ singularity exec docker://esayyari/discovista discoVista.py -m 1 -c data/paramet
 ```
 
 where the clades to be tested are defined as follows.
-```
+```bash
 Clade Name	Clade Definition	Section Letter	Components	Show	Comments
 All	"callorhinchus""+""lepisosteus""+""latimeria""+""eptatretus""+""amblyraja""+""bblch""+""BlncHG_Trinity""+""Blnc2018_re""+""bflor""+""ASY_Yue""+""ASY""+""EPI""+""ciona""+""botrylloides""+""anneissia""+""saccoglossus"	None		0	
 CHOR	"callorhinchus""+""lepisosteus""+""latimeria""+""eptatretus""+""amblyraja""+""bblch""+""BlncHG_Trinity""+""Blnc2018_re""+""bflor""+""ASY_Yue""+""ASY""+""EPI""+""ciona""+""botrylloides"	chordate		1	
