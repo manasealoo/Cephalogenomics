@@ -32,7 +32,7 @@ The logic of `*1,*2,*3` stems from `RL|SO` `RS|LO` `RO|LS` configurations of qua
 
 ## Internode certainty
 
-To further assess the discordance seen in our phylogeny, we examined the [Quartet-Based Computations of Internode Certainty](https://academic.oup.com/sysbio/article/69/2/308/5556115) where score values close to 1 (or –1) suggest that the given internal branch is supported (or contested) whereas score values close to 0 indicate high levels of incongruence or the lack of phylogenetic signal.
+To further assess the discordance seen in our phylogeny, we examined the [Quartet-Based Computations of Internode Certainty](https://github.com/lutteropp/QuartetScores) where score values close to 1 (or –1) suggest that the given internal branch is supported (or contested) whereas score values close to 0 indicate high levels of incongruence or the lack of phylogenetic signal (according to the [paper](https://academic.oup.com/sysbio/article/69/2/308/5556115)).
 
 After some preprocessing,
 ```bash
@@ -60,13 +60,87 @@ QuartetScores \
 ```
 
 This resulted in the following annotation.
-```
+```bash
 (bflor:0.019831,(Blnc2018_re:0.008333,BlncHG_Trinity:0.004664):0.018063[qp-ic:0.809926;lq-ic:0.784249;eqp-ic:0.809926],(bblch:0.020873,(((ASY_Yue:0.014234,ASY:0.017148):0.026322[qp-ic:0.662782;lq-ic:0.576005;eqp-ic:0.619170],EPI:0.034693):0.009572[qp-ic:0.024226;lq-ic:0.022041;eqp-ic:0.024226],((saccoglossus:0.382325,anneissia:0.550996):0.126742[qp-ic:0.266062;lq-ic:0.221047;eqp-ic:0.266062],((((latimeria:0.104214,lepisosteus:0.133424):0.031916[qp-ic:0.183695;lq-ic:0.177893;eqp-ic:0.183695],(callorhinchus:0.076915,amblyraja:0.089525):0.063518[qp-ic:0.683322;lq-ic:0.651023;eqp-ic:0.683322]):0.151402[qp-ic:0.633298;lq-ic:0.605766;eqp-ic:0.633298],eptatretus:0.531021):0.2116[qp-ic:0.670829;lq-ic:0.648686;eqp-ic:0.670829],(ciona:0.523926,botrylloides:0.576242):0.515517[qp-ic:0.896867;lq-ic:0.871096;eqp-ic:0.896867]):0.105001[qp-ic:0.193464;lq-ic:0.165745;eqp-ic:0.193464]):0.388338[qp-ic:0.984377;lq-ic:0.963000;eqp-ic:0.976753]):0.019577[qp-ic:0.400349;lq-ic:0.383173;eqp-ic:0.400349]):0.006812[qp-ic:0.141911;lq-ic:0.126829;eqp-ic:0.141911]);
 ```
 
 Note: it is also interesting to see the internode certainty scores at the base of chordates.
 
 ## Analysis of the bootstrap support of the individual gene trees
+
+For this, we used [DiscoVista](https://github.com/esayyari/DiscoVista).
+
+```bash
+mkdir PPP_BS_para_discovista
+
+cp ../PPP_BS_aln_out/*.treefile PPP_BS_para_discovista
+
+for f in *aln_pruned_1.fasta.treefile; do
+mv -- "$f" "${f%.aln_pruned_1.fasta.treefile}_1.aln_pruned.fasta.treefile"
+done
+for f in *aln_pruned_2.fasta.treefile; do
+mv -- "$f" "${f%.aln_pruned_2.fasta.treefile}_2.aln_pruned.fasta.treefile"
+done
+```
+
+We then created a file `run_clean_geneID.sh`
+
+```bash
+#!/usr/bin/env bash
+files=(*.treefile)
+sed 's/|XP_[0-9]*\.[0-9]\:/\:/g' ${files[$LSB_JOBINDEX-1]} | \
+sed 's/|TRINITY_GG_[0-9]*_c[0-9]*_g[0-9]*_i[0-9]*\.p[0-9]*\:/\:/g' | \
+sed 's/|TRINITY_DN[0-9]*_c[0-9]*_g[0-9]*_i[0-9]*\.p[0-9]*\:/\:/g' | \
+sed 's/|g[0-9]*\.t[0-9]*\:/\:/g' | \
+sed 's/|Boleac\.CG\.SB_v[0-9]*\.S[0-9]*\.g[0-9]*\.[0-9]*\.t\:/\:/g' | \
+sed 's/|Eptbu[0-9]*\.t[0-9]*\:/\:/g' | \
+sed 's/|NP_[0-9]*\.[0-9]\:/\:/g' > ${files[$LSB_JOBINDEX-1]%.treefile}.cl.tre
+
+chmod u+x run_clean_geneID.sh
+```
+
+which we ran
+
+```bash
+./run_clean_geneID.sh
+```
+
+These gene trees were then moved
+```bash
+for f in *.cl.tre; do
+mkdir ${f%.aln_pruned.fasta.cl.tre}
+mkdir ${f%.aln_pruned.fasta.cl.tre}/${f%.aln_pruned.fasta.cl.tre}_PPP_test-FAA
+mv $f ${f%.aln_pruned.fasta.cl.tre}/${f%.aln_pruned.fasta.cl.tre}_PPP_test-FAA/estimated_gene_trees.tree
+done
+
+rm *.treefile
+```
+
+Then we ran DiscoVista
+```bash
+singularity exec docker://esayyari/discovista discoVista.py -m 1 -c data/parameter/clades-def_4.txt -p PPP_BS_para_discovista -t 80 -o results_BS_trees_new
+```
+
+where the clades to be tested are defined as follows.
+```
+Clade Name	Clade Definition	Section Letter	Components	Show	Comments
+All	"callorhinchus""+""lepisosteus""+""latimeria""+""eptatretus""+""amblyraja""+""bblch""+""BlncHG_Trinity""+""Blnc2018_re""+""bflor""+""ASY_Yue""+""ASY""+""EPI""+""ciona""+""botrylloides""+""anneissia""+""saccoglossus"	None		0	
+CHOR	"callorhinchus""+""lepisosteus""+""latimeria""+""eptatretus""+""amblyraja""+""bblch""+""BlncHG_Trinity""+""Blnc2018_re""+""bflor""+""ASY_Yue""+""ASY""+""EPI""+""ciona""+""botrylloides"	chordate		1	
+VERT	"callorhinchus""+""lepisosteus""+""latimeria""+""eptatretus""+""amblyraja"	chordate		1	
+CEPH	"bblch""+""BlncHG_Trinity""+""Blnc2018_re""+""bflor""+""ASY_Yue""+""ASY""+""EPI"	amphioxus		1	
+TUNI	"ciona""+""botrylloides"	chordate		1	
+AMBU	"anneissia""+""saccoglossus"	chordate		1	
+VERT/CEPH	"callorhinchus""+""lepisosteus""+""latimeria""+""eptatretus""+""amblyraja""+""bblch""+""BlncHG_Trinity""+""Blnc2018_re""+""bflor""+""ASY_Yue""+""ASY""+""EPI"	chordate		1	
+VERT/TUNI	"callorhinchus""+""lepisosteus""+""latimeria""+""eptatretus""+""amblyraja""+""ciona""+""botrylloides"	chordate		1	
+BRAN	"bblch""+""BlncHG_Trinity""+""Blnc2018_re""+""bflor"	amphioxus		1	
+BFLO/BLNC	"BlncHG_Trinity""+""Blnc2018_re""+""bflor"	amphioxus		1	
+BBLC/BLNC	"BlncHG_Trinity""+""Blnc2018_re""+""bblch"	amphioxus		1	
+ASY/EPI	"ASY_Yue""+""ASY""+""EPI"	amphioxus		1	
+EPI/BRAN	"bblch""+""BlncHG_Trinity""+""Blnc2018_re""+""bflor""+""EPI"	amphioxus		1	
+ASY/BRAN	"bblch""+""BlncHG_Trinity""+""Blnc2018_re""+""bflor""+""ASY""+""ASY_Yue"	amphioxus		1	
+BFLO/BBLC	"bflor""+""bblch"	amphioxus		1	
+CEPH/TUNI	"bblch""+""BlncHG_Trinity""+""Blnc2018_re""+""bflor""+""ASY_Yue""+""ASY""+""EPI""+""ciona""+""botrylloides"	chordate		1	
+```
 
 ## Likelihood-based phylogenetic signal in the supermatrix
 
