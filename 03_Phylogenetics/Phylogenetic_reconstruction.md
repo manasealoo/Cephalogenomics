@@ -90,7 +90,7 @@ We used `phylopypruner` to obtain the single copy orthologes for the quartet-bas
 
 ```bash
 phylopypruner \
---dir phylopypruner_input \
+--dir IQTREE_BS_phylopypruner_input \
 --outgroup anneissia saccoglossus \
 --threads 8 \
 --min-len 50 \
@@ -101,7 +101,7 @@ phylopypruner \
 --min-otu-occupancy 0.1 \
 --min-gene-occupancy 0.1 \
 --mask pdist \
---output phylopypruner_output_para
+--output phylopypruner_output_BS_para
 ```
 
 Where
