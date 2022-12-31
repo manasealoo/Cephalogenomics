@@ -57,7 +57,7 @@ sed 's/|TRINITY_DN[0-9]*_c[0-9]*_g[0-9]*_i[0-9]*\.p[0-9]*\:/\:/g' | \
 sed 's/|g[0-9]*\.t[0-9]*\:/\:/g' | \
 sed 's/|Boleac\.CG\.SB_v[0-9]*\.S[0-9]*\.g[0-9]*\.[0-9]*\.t\:/\:/g' | \
 sed 's/|Eptbu[0-9]*\.t[0-9]*\:/\:/g' | \
-sed 's/|NP_[0-9]*\.[0-9]\:/\:/g' > pd3_all_input_trees.cl.tr
+sed 's/|NP_[0-9]*\.[0-9]\:/\:/g' > pd3_all_input_trees.cl.tre
 ```
 
 Then
